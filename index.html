@@ -53,18 +53,61 @@
 </head>
 <body>
 
-  <div id="editor">let lexer = new Lexas({
-  tokens: ['Expr', 'Term'],
-  rules: [
-    ['Expr', ['Expr', '+', 'Term']],
-    ['Expr', ['Expr', '-', 'Term']],
-    ['Expr', ['Term']],
-    ...[...'0123456789'].map(i => ['Term', [i]])
-  ]
-})
+  <div id="editor">let lexer = new Lexas([
+  [/^\d+/, m => ({ type: TOKEN.OPERAND, value: parseInt(m) })],
+  ['+', { type: TOKEN.OPERATOR, symbol: '+', precedence: 5, fixity: 'left' }],
+  ['-', { type: TOKEN.OPERATOR, symbol: '-', precedence: 5, fixity: 'left' }],
+  ['*', { type: TOKEN.OPERATOR, symbol: '*', precedence: 6, fixity: 'left' }],
+  ['/', { type: TOKEN.OPERATOR, symbol: '/', precedence: 6, fixity: 'left' }],
+  [/^\s+/, { type: TOKEN.SKIP }],
+  [/^\(+/, { type: TOKEN.LEFT, value: '(', match: ')' }],
+  [/^\)+/, { type: TOKEN.RIGHT, match: '(', value: ')' }],
+])
 
-for (let c of lexer.flattenLex('9+5-4'))
-  $('#out').innerText += [c.token, '(', c.child, ')'].join(' ') + '\n'</div>
+const dfs = (n) => {
+  switch(n.type) {
+    case TOKEN.BINARY: {
+      $('#out').innerText += '(' + n.op.symbol + ' '
+      dfs(n.lhs);
+      $('#out').innerText += ' '
+      dfs(n.rhs);
+      $('#out').innerText += ')'
+      break;
+    }
+    case TOKEN.BRACKET: {
+      dfs(n.node);
+      break;
+    }
+    case TOKEN.OPERAND: {
+      $('#out').innerText += n.value;
+      break;
+    }
+  }
+}
+
+const lodfs = (n) => {
+  switch(n.type) {
+    case TOKEN.BINARY: {
+      lodfs(n.lhs);
+      lodfs(n.rhs);
+      $('#out').innerText += n.op.symbol;
+      break;
+    }
+    case TOKEN.BRACKET: {
+      lodfs(n.node);
+      break;
+    }
+    case TOKEN.OPERAND: {
+      $('#out').innerText += n.value;
+      break;
+    }
+  }
+}
+
+$('#out').innerText += 'sexp:\n'
+dfs(lexer.parse("3 + (5 * 2 - 4) / 6"))
+$('#out').innerText += '\nlast order:\n'
+lodfs(lexer.parse("3 + (5 * 2 - 4) / 6"))</div>
 
   <button id="reset" onclick="reset()">Reload</button>
   <button id="run" onclick="run()">(Ctrl-B) Execute</button>
