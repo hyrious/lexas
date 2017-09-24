@@ -11,7 +11,7 @@
       bottom: 0;
       left: 0;
     }
-    #run {
+    #reset,#run {
       position: absolute;
       right: 0;
       top: 0;
@@ -23,8 +23,9 @@
       border-width: 0;
       box-shadow: 0 0 4px rgba(0,0,0,.42);
     }
-    #run:hover { background-color: rgba(255,255,255,.95); }
-    #run:active { background-color: rgba(0,0,0,.5); color: #FFF; }
+    #reset { right: 192px }
+    #reset:hover,#run:hover { background-color: rgba(255,255,255,.95); }
+    #reset:active,#run:active { background-color: rgba(0,0,0,.5); color: #FFF; }
     #out:before {
       content: "#out";
       display: block;
@@ -48,6 +49,7 @@
       font-family: monospace;
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdui/0.3.0/css/mdui.min.css">
 </head>
 <body>
 
@@ -64,11 +66,13 @@
 for (let c of lexer.flattenLex('9+5-4'))
   $('#out').innerText += [c.token, '(', c.child, ')'].join(' ') + '\n'</div>
 
+  <button id="reset" onclick="reset()">Reload</button>
   <button id="run" onclick="run()">(Ctrl-B) Execute</button>
   <div id="out"></div>
 
   <script src="lexas.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdui/0.3.0/js/mdui.min.js"></script>
   <script>
     const $ = document.querySelector.bind(document);
     const run = () => {
@@ -78,11 +82,29 @@ for (let c of lexer.flattenLex('9+5-4'))
     var editor = ace.edit("editor");
     editor.setTheme("ace/theme/chrome");
     editor.getSession().setMode("ace/mode/javascript");
+    const reset = () => {
+      localStorage.removeItem('Ace Cache');
+      window.location.reload(false);
+    }
     editor.commands.addCommand({
       name: "run",
-      bindKey: {win: "Ctrl-B", mac: "Command-Option-B"},
-      exec: run
+      bindKey: { win: "Ctrl-B", mac: "Command-Option-B" },
+      exec: run,
     });
+    editor.commands.addCommand({
+      name: 'saveFile',
+      bindKey: { win: 'Ctrl-S', mac: 'Command-S', sender: 'editor|cli' },
+      exec: () => {
+        mdui.snackbar({
+          message: 'Saved', timeout: 1233, position: 'right-bottom'
+        });
+      },
+    });
+    editor.getSession().on('change', function(e) {
+      localStorage.setItem('Ace Cache', editor.getValue());
+    });
+    var _ = localStorage.getItem('Ace Cache');
+    if (_) editor.setValue(_);
   </script>
 </body>
 </html>
