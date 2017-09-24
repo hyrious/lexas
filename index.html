@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Lexas</title>
+  <style type="text/css" media="screen">
+    #editor { 
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+    #run {
+      position: absolute;
+      right: 0;
+      top: 0;
+      z-index: 9;
+      padding: 8px 16px;
+      font-size: 22px;
+      color: #000;
+      background-color: rgba(0,0,0,.12);
+      border-width: 0;
+      box-shadow: 0 0 4px rgba(0,0,0,.42);
+    }
+    #run:hover { background-color: rgba(255,255,255,.95); }
+    #run:active { background-color: rgba(0,0,0,.5); color: #FFF; }
+    #out:before {
+      content: "#out";
+      display: block;
+      color: darkgrey;
+    }
+    #out {
+      position: absolute;
+      right: 0;
+      top: 48px;
+      z-index: 9;
+      width: 36%;
+      height: 480px;
+      border-top-left-radius: 7px;
+      border-bottom-left-radius: 7px;
+      box-shadow: inset 4px 0 9px rgba(0,0,0,.42);
+      padding: 11px 16px;
+      word-wrap: normal;
+      white-space: pre;
+      overflow: auto;
+      background-color: #eee;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="editor">let lexer = new Lexas({
+  tokens: ['Expr', 'Term'],
+  rules: [
+    ['Expr', ['Expr', '+', 'Term']],
+    ['Expr', ['Expr', '-', 'Term']],
+    ['Expr', ['Term']],
+    ...[...'0123456789'].map(i => ['Term', [i]])
+  ]
+})
+
+for (let c of lexer.flattenLex('9+5-4'))
+  $('#out').innerText += [c.token, '(', c.child, ')'].join(' ') + '\n'</div>
+
+  <button id="run" onclick="run()">(Ctrl-B) Execute</button>
+  <div id="out"></div>
+
+  <script src="lexas.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
+  <script>
+    const $ = document.querySelector.bind(document);
+    const run = () => {
+      $('#out').innerText = '';
+      eval('(function(){' + editor.getValue() + '})();');
+    };
+    var editor = ace.edit("editor");
+    editor.setTheme("ace/theme/chrome");
+    editor.getSession().setMode("ace/mode/javascript");
+    editor.commands.addCommand({
+      name: "run",
+      bindKey: {win: "Ctrl-B", mac: "Command-Option-B"},
+      exec: run
+    });
+  </script>
+</body>
+</html>
