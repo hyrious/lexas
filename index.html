@@ -27,9 +27,9 @@
     #reset:hover,#run:hover { background-color: rgba(255,255,255,.95); }
     #reset:active,#run:active { background-color: rgba(0,0,0,.5); color: #FFF; }
     #out:before {
-      content: "#out";
+      content: "$(\"#out\")";
       display: block;
-      color: darkgrey;
+      color: darkcyan;
     }
     #out {
       position: absolute;
@@ -38,9 +38,9 @@
       z-index: 9;
       width: 36%;
       height: 480px;
-      border-top-left-radius: 7px;
-      border-bottom-left-radius: 7px;
-      box-shadow: inset 4px 0 9px rgba(0,0,0,.42);
+      border-top-left-radius: 3px;
+      border-bottom-left-radius: 3px;
+      box-shadow: inset 2px 2px 9px rgba(0,0,0,.42);
       padding: 11px 16px;
       word-wrap: normal;
       white-space: pre;
@@ -53,61 +53,48 @@
 </head>
 <body>
 
-  <div id="editor">let lexer = new Lexas([
-  [/^\d+/, m => ({ type: TOKEN.OPERAND, value: parseInt(m) })],
-  ['+', { type: TOKEN.OPERATOR, symbol: '+', precedence: 5, fixity: 'left' }],
-  ['-', { type: TOKEN.OPERATOR, symbol: '-', precedence: 5, fixity: 'left' }],
-  ['*', { type: TOKEN.OPERATOR, symbol: '*', precedence: 6, fixity: 'left' }],
-  ['/', { type: TOKEN.OPERATOR, symbol: '/', precedence: 6, fixity: 'left' }],
+  <div id="editor">const dfs = (n) =&gt; {
+  switch(n.type) {
+    case TOKEN.BINARY:
+      return &#039;(&#039; + n.op.symbol + &#039; &#039; + dfs(n.lhs) + &#039; &#039; + dfs(n.rhs) + &#039;)&#039;;
+    case TOKEN.BRACKET:
+      return dfs(n.node);
+    case TOKEN.OPERAND:
+      return n.value;
+  }
+}
+const lodfs = (n) =&gt; {
+  switch(n.type) {
+    case TOKEN.BINARY:
+      return lodfs(n.lhs) + &#039; &#039; + lodfs(n.rhs) + &#039; &#039; + n.op.symbol
+    case TOKEN.BRACKET:
+      return lodfs(n.node);
+    case TOKEN.OPERAND:
+      return n.value;
+  }
+}
+
+const solve = (input) =&gt; {
+  return &#039;&lt;table&gt;&lt;tr&gt;&lt;td&gt;input&lt;/td&gt;&lt;td&gt;&#039; + input +
+  &#039;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;sexp&lt;/td&gt;&lt;td&gt;&#039; + dfs(lexer.parse(input)) +
+  &#039;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;lastOrder&lt;/td&gt;&lt;td&gt;&#039; + lodfs(lexer.parse(input)) +
+  &#039;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&#039;
+}
+
+let lexer = new Lexas([
+  [/^\d+/, m =&gt; ({ type: TOKEN.OPERAND, value: parseInt(m) })],
+  [&#039;+&#039;, { type: TOKEN.OPERATOR, symbol: &#039;+&#039;, precedence: 5, fixity: &#039;left&#039; }],
+  [&#039;-&#039;, { type: TOKEN.OPERATOR, symbol: &#039;-&#039;, precedence: 5, fixity: &#039;left&#039; }],
+  [&#039;*&#039;, { type: TOKEN.OPERATOR, symbol: &#039;*&#039;, precedence: 6, fixity: &#039;left&#039; }],
+  [&#039;/&#039;, { type: TOKEN.OPERATOR, symbol: &#039;/&#039;, precedence: 6, fixity: &#039;left&#039; }],
   [/^\s+/, { type: TOKEN.SKIP }],
-  [/^\(+/, { type: TOKEN.LEFT, value: '(', match: ')' }],
-  [/^\)+/, { type: TOKEN.RIGHT, match: '(', value: ')' }],
+  [/^\(+/, { type: TOKEN.LEFT, value: &#039;(&#039;, match: &#039;)&#039; }],
+  [/^\)+/, { type: TOKEN.RIGHT, match: &#039;(&#039;, value: &#039;)&#039; }],
 ])
 
-const dfs = (n) => {
-  switch(n.type) {
-    case TOKEN.BINARY: {
-      $('#out').innerText += '(' + n.op.symbol + ' '
-      dfs(n.lhs);
-      $('#out').innerText += ' '
-      dfs(n.rhs);
-      $('#out').innerText += ')'
-      break;
-    }
-    case TOKEN.BRACKET: {
-      dfs(n.node);
-      break;
-    }
-    case TOKEN.OPERAND: {
-      $('#out').innerText += n.value;
-      break;
-    }
-  }
-}
-
-const lodfs = (n) => {
-  switch(n.type) {
-    case TOKEN.BINARY: {
-      lodfs(n.lhs);
-      lodfs(n.rhs);
-      $('#out').innerText += n.op.symbol;
-      break;
-    }
-    case TOKEN.BRACKET: {
-      lodfs(n.node);
-      break;
-    }
-    case TOKEN.OPERAND: {
-      $('#out').innerText += n.value;
-      break;
-    }
-  }
-}
-
-$('#out').innerText += 'sexp:\n'
-dfs(lexer.parse("3 + (5 * 2 - 4) / 6"))
-$('#out').innerText += '\nlast order:\n'
-lodfs(lexer.parse("3 + (5 * 2 - 4) / 6"))</div>
+$(&#039;#out&#039;).innerHTML += &#039;&lt;style&gt;table:not(:last-child){border-bottom:1px solid #000}&lt;/style&gt;&#039;
+$(&#039;#out&#039;).innerHTML += solve(&#039;9-5+4&#039;)
+$(&#039;#out&#039;).innerHTML += solve(&quot;3 + (5 * 2 - 4) / 6&quot;)</div>
 
   <button id="reset" onclick="reset()">Reload</button>
   <button id="run" onclick="run()">(Ctrl-B) Execute</button>
