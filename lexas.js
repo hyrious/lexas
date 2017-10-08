@@ -5,13 +5,13 @@ Array.prototype.last = function(rindex = 1) {
 };
 
 const TOKEN = {
-  OPERAND: Symbol(),
-  OPERATOR: Symbol(),
-  SKIP: Symbol(),
-  LEFT: Symbol(),
-  RIGHT: Symbol(),
-  BINARY: Symbol(),
-  BRACKET: Symbol(),
+  OPERAND: Symbol.for('OPERAND'),
+  OPERATOR: Symbol.for('OPERATOR'),
+  SKIP: Symbol.for('SKIP'),
+  LEFT: Symbol.for('LEFT'),
+  RIGHT: Symbol.for('RIGHT'),
+  BINARY: Symbol.for('BINARY'),
+  BRACKET: Symbol.for('BRACKET'),
 }
 
 const EOP = { type: TOKEN.OPERATOR, symbol: '$', precedence: -1, fixity: 'left' }
