@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+</head>
+<body>
+  <a href="javascript:void(0);" title="download" id="download">
+    <canvas width="107" height="15" id="app"></canvas>
+  </a>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min.js"></script>
+  <script>
+    var canvas = document.getElementById('app');
+    var context = canvas.getContext('2d', { alpha: false });
+    context.fillStyle = 'white';
+    context.fillRect(0,0,107,15);
+    context.fillStyle = '#007ec4';
+    context.fillRect(2,2,45,11);
+    context.fillStyle = '#f2f2f2';
+    context.fillRect(48,2,57,11);
+    var imageData = context.getImageData(0,0,107,15);
+    function strokeRect(imageData, r = 0, g = 0, b = 0, a = 255) {
+      var data = imageData.data;
+      var width = imageData.width;
+      var height = imageData.height;
+      var bottomStart = (height - 1) * width;
+      for (var j = 0; j < width; ++j) {
+        data[j * 4 + 0] = data[(bottomStart + j) * 4 + 0] = r;
+        data[j * 4 + 1] = data[(bottomStart + j) * 4 + 1] = g;
+        data[j * 4 + 2] = data[(bottomStart + j) * 4 + 2] = b;
+        data[j * 4 + 3] = data[(bottomStart + j) * 4 + 3] = a;
+      }
+      var rightStart = width - 1;
+      for (var i = 0; i < height; ++i) {
+        data[i * width * 4 + 0] = data[(rightStart + i * width) * 4 + 0] = r;
+        data[i * width * 4 + 1] = data[(rightStart + i * width) * 4 + 1] = g;
+        data[i * width * 4 + 2] = data[(rightStart + i * width) * 4 + 2] = b;
+        data[i * width * 4 + 3] = data[(rightStart + i * width) * 4 + 3] = a;
+      }
+    }
+    strokeRect(imageData);
+    function putPixels(imageData, pixels, x, y, r = 255, g = 255, b = 255, a = 255) {
+      var data = imageData.data;
+      var width = imageData.width;
+      var height = imageData.height;
+      for (var j = 0; j < pixels.length; ++j) {
+        for (var i = 0; i < pixels[j].length; ++i) {
+          if (pixels[j][i] !== ' ') {
+            data[(x + i + (j + y) * width) * 4 + 0] = r;
+            data[(x + i + (j + y) * width) * 4 + 1] = g;
+            data[(x + i + (j + y) * width) * 4 + 2] = b;
+            data[(x + i + (j + y) * width) * 4 + 3] = a;
+          }
+        }
+      }
+    }
+    var pixiv = [
+      '      #       #      ',
+      '                     ',
+      '####  # #   # # #   #',
+      '#   # #  # #  # #   #',
+      '#   # #   #   #  # # ',
+      '#   # #  # #  #  # # ',
+      '####  # #   # #   #  ',
+      '#                    ',
+      '#                    ',
+    ];
+    putPixels(imageData, pixiv, 14, 4);
+    var nums = {
+      '0': [' ### ',
+            '#   #',
+            '#   #',
+            '#   #',
+            '#   #',
+            '#   #',
+            ' ### '],
+      '1': ['  #  ',
+            ' ##  ',
+            '  #  ',
+            '  #  ',
+            '  #  ',
+            '  #  ',
+            ' ### '],
+      '2': [' ### ',
+            '#   #',
+            '    #',
+            '   # ',
+            '  #  ',
+            ' #   ',
+            '#####'],
+      '3': [' ### ',
+            '#   #',
+            '    #',
+            ' ### ',
+            '    #',
+            '#   #',
+            ' ### '],
+      '4': ['   # ',
+            '  ## ',
+            ' # # ',
+            '#  # ',
+            '#####',
+            '   # ',
+            '   # '],
+      '5': ['#####',
+            '#    ',
+            '#    ',
+            '#### ',
+            '    #',
+            '    #',
+            '#### '],
+      '6': [' ### ',
+            '#   #',
+            '#    ',
+            '#### ',
+            '#   #',
+            '#   #',
+            ' ### '],
+      '7': ['#####',
+            '    #',
+            '   # ',
+            '   # ',
+            '  #  ',
+            '  #  ',
+            '  #  '],
+      '8': [' ### ',
+            '#   #',
+            '#   #',
+            ' ### ',
+            '#   #',
+            '#   #',
+            ' ### '],
+      '9': [' ### ',
+            '#   #',
+            '#   #',
+            '#   #',
+            ' ####',
+            '    #',
+            ' ### '],
+    };
+    function putNumbers(id) {
+      if (id.length > 8) window.alert('id should be less than 8 numbers!');
+      id = id.padStart(8, ' ').substring(0,8);
+      for (var i = 0; i < 8; ++i) {
+        if (id[i] === ' ' || !(id[i] in nums)) continue;
+        putPixels(imageData, nums[id[i]], 49 + i * 7, 4, 0, 0, 0);
+      }
+    }
+    var id = Qs.parse(window.location.search, { ignoreQueryPrefix: true }).id;
+    putNumbers('' + (id || '12345678'));
+    context.putImageData(imageData, 0,0);
+    var a = document.getElementById('download');
+    a.href = canvas.toDataURL();
+    a.download = '' + (id || '12345678') + '.png';
+  </script>
+</body>
+</html>
