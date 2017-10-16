@@ -2,139 +2,56 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Lexas</title>
-  <style type="text/css" media="screen">
-    #editor { 
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=0.75">
+  <title>SPA PG</title>
+  <style>
+    body{user-select:none;cursor:default}
+    main{max-width:764px;margin:0 auto;margin-top:21px}
+    h1{font-family:serif;margin:18px 21px 7px}
+    h4{margin:18px 21px 7px;font-size:24px;font-family:sans-serif}
+    a{color:inherit;text-decoration:none;border-bottom:.1em dashed #666}
+    a:hover{border-bottom-style:solid;border-bottom-color:#000}
+    ul{list-style-type:none;padding-left:0;margin:21px}
+    li{margin-left:30px;margin-bottom:14px;font-family:monospace;font-size:1.2em}
+    p{margin:0 21px 12px;padding-left:2em;word-wrap:break-word;font-size:18px;line-height:1.58;color:#666}
+    aside{margin:0 21px 12px;text-align:right;font-size:14px;line-height:1.38;color:#888}
+    code{padding:0 .3em;background-color:#eee}
+    .spacer{height:.5em}
+    del{position:relative;text-decoration:none;white-space:nowrap}
+    del:after{
+      content: "";
+      border-bottom: 0.125em solid #333;
+      height: 0.125em;
       left: 0;
-    }
-    #reset,#run {
+      margin-top: calc(0.125em / 2 * -1);
       position: absolute;
       right: 0;
-      top: 0;
-      z-index: 9;
-      padding: 8px 16px;
-      font-size: 22px;
-      color: #000;
-      background-color: rgba(0,0,0,.12);
-      border-width: 0;
-      box-shadow: 0 0 4px rgba(0,0,0,.42);
-    }
-    #reset { right: 192px }
-    #reset:hover,#run:hover { background-color: rgba(255,255,255,.95); }
-    #reset:active,#run:active { background-color: rgba(0,0,0,.5); color: #FFF; }
-    #out:before {
-      content: "$(\"#out\")";
-      display: block;
-      color: darkcyan;
-    }
-    #out {
-      position: absolute;
-      right: 0;
-      top: 48px;
-      z-index: 9;
-      width: 36%;
-      height: 480px;
-      border-top-left-radius: 3px;
-      border-bottom-left-radius: 3px;
-      box-shadow: inset 2px 2px 9px rgba(0,0,0,.42);
-      padding: 11px 16px;
-      word-wrap: normal;
-      white-space: pre;
-      overflow: auto;
-      background-color: #eee;
-      font-family: monospace;
+      top: 50%;
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdui/0.3.0/css/mdui.min.css">
 </head>
 <body>
-
-  <div id="editor">const dfs = (n) =&gt; {
-  switch(n.type) {
-    case TOKEN.BINARY:
-      return &#039;(&#039; + n.op.symbol + &#039; &#039; + dfs(n.lhs) + &#039; &#039; + dfs(n.rhs) + &#039;)&#039;;
-    case TOKEN.BRACKET:
-      return dfs(n.node);
-    case TOKEN.OPERAND:
-      return n.value;
-  }
-}
-const lodfs = (n) =&gt; {
-  switch(n.type) {
-    case TOKEN.BINARY:
-      return lodfs(n.lhs) + &#039; &#039; + lodfs(n.rhs) + &#039; &#039; + n.op.symbol
-    case TOKEN.BRACKET:
-      return lodfs(n.node);
-    case TOKEN.OPERAND:
-      return n.value;
-  }
-}
-
-const solve = (input) =&gt; {
-  return &#039;&lt;table&gt;&lt;tr&gt;&lt;td&gt;input&lt;/td&gt;&lt;td&gt;&#039; + input +
-  &#039;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;sexp&lt;/td&gt;&lt;td&gt;&#039; + dfs(lexer.parse(input)) +
-  &#039;&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;lastOrder&lt;/td&gt;&lt;td&gt;&#039; + lodfs(lexer.parse(input)) +
-  &#039;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&#039;
-}
-
-let lexer = new Lexas([
-  [/^\d+/, m =&gt; ({ type: TOKEN.OPERAND, value: parseInt(m) })],
-  [&#039;+&#039;, { type: TOKEN.OPERATOR, symbol: &#039;+&#039;, precedence: 5, fixity: &#039;left&#039; }],
-  [&#039;-&#039;, { type: TOKEN.OPERATOR, symbol: &#039;-&#039;, precedence: 5, fixity: &#039;left&#039; }],
-  [&#039;*&#039;, { type: TOKEN.OPERATOR, symbol: &#039;*&#039;, precedence: 6, fixity: &#039;left&#039; }],
-  [&#039;/&#039;, { type: TOKEN.OPERATOR, symbol: &#039;/&#039;, precedence: 6, fixity: &#039;left&#039; }],
-  [/^\s+/, { type: TOKEN.SKIP }],
-  [/^\(+/, { type: TOKEN.LEFT, value: &#039;(&#039;, match: &#039;)&#039; }],
-  [/^\)+/, { type: TOKEN.RIGHT, match: &#039;(&#039;, value: &#039;)&#039; }],
-])
-
-$(&#039;#out&#039;).innerHTML += &#039;&lt;style&gt;table:not(:last-child){border-bottom:1px solid #000}&lt;/style&gt;&#039;
-$(&#039;#out&#039;).innerHTML += solve(&#039;9-5+4&#039;)
-$(&#039;#out&#039;).innerHTML += solve(&quot;3 + (5 * 2 - 4) / 6&quot;)</div>
-
-  <button id="reset" onclick="reset()">Reload</button>
-  <button id="run" onclick="run()">(Ctrl-B) Execute</button>
-  <div id="out"></div>
-
-  <script src="lexas.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.8/ace.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdui/0.3.0/js/mdui.min.js"></script>
-  <script>
-    const $ = document.querySelector.bind(document);
-    const run = () => {
-      $('#out').innerText = '';
-      eval('(function(){' + editor.getValue() + '})();');
-    };
-    var editor = ace.edit("editor");
-    editor.setTheme("ace/theme/chrome");
-    editor.getSession().setMode("ace/mode/javascript");
-    const reset = () => {
-      localStorage.removeItem('Ace Cache');
-      window.location.reload(false);
-    }
-    editor.commands.addCommand({
-      name: "run",
-      bindKey: { win: "Ctrl-B", mac: "Command-Option-B" },
-      exec: run,
-    });
-    editor.commands.addCommand({
-      name: 'saveFile',
-      bindKey: { win: 'Ctrl-S', mac: 'Command-S', sender: 'editor|cli' },
-      exec: () => {
-        mdui.snackbar({
-          message: 'Saved', timeout: 1233, position: 'right-bottom'
-        });
-      },
-    });
-    editor.getSession().on('change', function(e) {
-      localStorage.setItem('Ace Cache', editor.getValue());
-    });
-    var _ = localStorage.getItem('Ace Cache');
-    if (_) editor.setValue(_);
-  </script>
+  <a href="https://github.com/hyrious/lexas" class="github-corner" aria-label="View source on Github"><svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a><style>.github-corner:hover .octo-arm{animation:octocat-wave 560ms ease-in-out}@keyframes octocat-wave{0%,100%{transform:rotate(0)}20%,60%{transform:rotate(-25deg)}40%,80%{transform:rotate(10deg)}}@media (max-width:500px){.github-corner:hover .octo-arm{animation:none}.github-corner .octo-arm{animation:octocat-wave 560ms ease-in-out}}</style>
+  <main>
+    <h1><a href="https://en.wikipedia.org/wiki/Single-page_application" target="_blank" title="单页应用">Single-page application</a> Playground</h1>
+    <div class="spacer"></div>
+    <ul><li><a href="opg.html" title="Operator Precedence Grammar|算符优先文法">OPG parser</a></li></ul>
+    <p>编译原理作业（1）使用 OPG parser 解析类似 <code>9-5+4</code> 的字符串，生成 AST。</p>
+    <p>使用到的外部库：<a href="https://ace.c9.io">Ace</a> <small>编辑器本体</small>；<a href="https://www.mdui.org">MDUI</a> <small>显示一个小提示框</small>。</p>
+    <p>OPG parser 的实现在该页源码里，使用 es6 编写，不支持过老的浏览器和 IE。</p>
+    <ul><li><a href="marked-discuz.html">Markdown to Discuz!bbcode</a></li></ul>
+    <p>将 markdown 转成 Discuz! 论坛使用的 bbcode 代码。</p>
+    <p>使用到的外部库：<a href="https://ace.c9.io">Ace</a> <small>编辑器本体</small>；<a href="https://github.com/chjj/marked">marked</a> <small>解析 markdown</small>。</p>
+    <ul><li><a href="pixiv-profile-banner.html?id=23333">Pixiv profile banner generator</a></li></ul>
+    <p>生成带有 pixiv 用户 ID 的图标，尝试将地址栏的 <code>?id=23333</code> 改成其他数字。</p>
+    <p>使用到的外部库：<a href="https://github.com/ljharb/qs">Qs</a> <small>解析地址栏字符串</small>。</p>
+    <h4>为什么要全部写到一个页面？</h4>
+    <p>证明一下前端有多<del>容易</del>。webpack、start、gulp……，写个网页需要这么复杂吗？<del>需要的</del> 其实，一个 <code>index.html</code> 就够了。</p>
+    <p>网页源代码的可读性并不比浏览器渲染后的差，你可以读读看当前页的源代码试试。</p>
+    <aside>我的另一个项目 <a href="https://github.com/hyrious/s-">s-</a> 也在试图证明机器码的可读性（逃</aside>
+    <p>使用到的外部库：<a href="http://tholman.com/github-corners">GitHub Corners</a> <small>右上角的章鱼猫</small>。</p>
+  </main>
+  <div class="spacer"></div>
 </body>
 </html>
