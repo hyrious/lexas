@@ -96,8 +96,8 @@ $(&#039;#out&#039;).innerHTML += &#039;&lt;style&gt;table:not(:last-child){borde
 $(&#039;#out&#039;).innerHTML += solve(&#039;9-5+4&#039;)
 $(&#039;#out&#039;).innerHTML += solve(&quot;3 + (5 * 2 - 4) / 6&quot;)</div>
 
-  <button id="reset" onclick="reset()">Reload</button>
-  <button id="run" onclick="run()">(Ctrl-B) Execute</button>
+  <button id="reset">Reload</button>
+  <button id="run">(Ctrl-B) Execute</button>
   <div id="out"></div>
 
   <script>
@@ -202,6 +202,8 @@ $(&#039;#out&#039;).innerHTML += solve(&quot;3 + (5 * 2 - 4) / 6&quot;)</div>
       localStorage.removeItem('Ace Cache');
       window.location.reload(false);
     }
+    $('#run').onclick = run;
+    $('#reset').onclick = reset;
     editor.commands.addCommand({
       name: "run",
       bindKey: { win: "Ctrl-B", mac: "Command-Option-B" },
