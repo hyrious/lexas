@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QRCode generator</title>
+</head>
+<body>
+  <script src="https://unpkg.com/qcode-decoder/build/qcode-decoder.min.js"></script>
+  <script src="https://unpkg.com/qrcodejs/qrcode.min.js"></script>
+  <div style="margin:.5em">
+    <input type="text" id="code"><small style="color:#678;padding:0 .5em">(hit enter)</small>
+  </div>
+  <div id="qrcode" style="margin:.5em"></div>
+  <script type="text/javascript">
+    var deqrcode = new QCodeDecoder();
+    var qrcode = new QRCode(document.getElementById("qrcode"), {
+      text: "http://jindo.dev.naver.com/collie",
+      width: 128,
+      height: 128,
+      colorDark : "#000000",
+      colorLight : "#ffffff",
+      correctLevel : QRCode.CorrectLevel.H
+    });
+    document.getElementById("code").onchange = function(e){
+      qrcode.clear();
+      qrcode.makeCode(e.target.value);
+    };
+  </script>
+</body>
+</html>
