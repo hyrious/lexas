@@ -1,30 +1,138 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
   <meta charset="UTF-8">
-  <title>QRCode generator</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+  <title>QRCode Helper</title>
+  <link id="page_favicon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAB6SURBVDhPjYxJEsQgDMT4/6cZg0y3WVI1OjhCmLSb3rvmm7gTmSYc6UD3z5z27Vo2Q8bKEs0quQEcNRFBOfm8AK7rrNRif9YQXIIjg3ddjEfqdQPXhHnzB6ze038KXEvXEdk2DhFRHGWHeGORJT7CtXCXB/O53+extR836g//8+K77AAAAABJRU5ErkJggg==" rel="icon" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/9.5.0/build.css">
+  <style>
+    main.container{width:500px;margin:5% auto}
+    #qrcode{padding:21px}
+    #qrcode img{margin:auto;max-width:100%}
+    textarea.form-control{width:100%;min-height:170px}
+    code{background-color:rgba(0,0,0,0.04);padding:.2em 0;font-size:85%}
+  </style>
 </head>
 <body>
-  <script src="https://unpkg.com/qcode-decoder/build/qcode-decoder.min.js"></script>
+  <main class="container">
+    <div class="columns">
+      <div class="one-half column bg-gray-light">
+        <div id="qrcode" class="centered"></div>
+      </div>
+      <div class="one-half column">
+        <form>
+          <textarea id="code" class="form-control"></textarea>
+        </form>
+      </div>
+    </div>
+    <div class="columns" style="margin-top:21px">
+      <div id="flash" class="flash">
+        If the qrcode-reader meets any error, it will show here.<br>
+        This library is very weak.
+      </div>
+    </div>
+    <div class="columns" style="padding:21px">
+      <h4>Usage</h4>
+      <ul>
+        <li>write/paste something to the textarea &rarr;</li>
+        <li>drag and drop &larr; image goto left, text goto right &rarr;</li>
+        <li>change canvas size by <a href="?width=256&height=256"><code>?width=256&amp;height=256</code></a></li>
+      </ul>
+      <h4>Vendors</h4>
+      <ul>
+        <li><a href="https://github.com/davidshimjs/qrcodejs">qrcodejs</a>: generator</li>
+        <li><a href="https://www.npmjs.com/package/qrcode-reader">qrcode-reader</a>: parser</li>
+        <li><a href="http://primercss.io/">Primer</a>: front-end</li>
+      </ul>
+    </div>
+  </main>
   <script src="https://unpkg.com/qrcodejs/qrcode.min.js"></script>
-  <div style="margin:.5em">
-    <input type="text" id="code"><small style="color:#678;padding:0 .5em">(hit enter)</small>
-  </div>
-  <div id="qrcode" style="margin:.5em"></div>
-  <script type="text/javascript">
-    var deqrcode = new QCodeDecoder();
-    var qrcode = new QRCode(document.getElementById("qrcode"), {
-      text: "http://jindo.dev.naver.com/collie",
+  <script src="https://unpkg.com/qrcode-reader/dist/index.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.5.1/qs.min.js"></script>
+  <script>
+    var options = Object.assign({
+      text: "example.com",
       width: 128,
       height: 128,
       colorDark : "#000000",
       colorLight : "#ffffff",
       correctLevel : QRCode.CorrectLevel.H
-    });
-    document.getElementById("code").onchange = function(e){
+    }, Qs.parse(window.location.search, { ignoreQueryPrefix: true }) || {});
+    if (options.width > 128) {
+      document.querySelector('main.container').style.width = +options.width * 2 + 124 + 'px';
+    }
+    if (options.height > 128) {
+      document.getElementById('code').style.height = +options.height + 42 + 'px';
+    }
+    var enter = document.getElementById("qrcode");
+    var qrcode = new QRCode(enter, options);
+    var textarea = document.getElementById("code");
+    var flash = document.getElementById("flash");
+    var qr = new QrCode();
+    qr.callback = function(error, result) {
+      if (error) {
+        flash.classList.add('flash-error');
+        flash.innerText = error;
+        return;
+      }
+      textarea.value = result.result;
+    };
+    textarea.addEventListener('input', function(e) {
       qrcode.clear();
       qrcode.makeCode(e.target.value);
-    };
+    }, false);
+    document.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'copy';
+    }, false);
+    document.addEventListener('drop', function(e) {
+      e.preventDefault();
+      var dt = e.dataTransfer;
+      var file = null;
+      if (dt.items) {
+        for (var i=0; i < dt.items.length; i++) {
+          if (dt.items[i].kind == "file") {
+            file = dt.items[i].getAsFile();
+            break;
+          }
+        }
+      } else file = dt.files[0];
+      if (file == null) return;
+      var reader = new FileReader();
+      var img = enter.getElementsByTagName('img')[0];
+      if (file.type.includes('image')) {
+        reader.onload = function(){
+          img.onload = function(){
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            canvas.width = this.naturalWidth;
+            canvas.height = this.naturalWidth;
+            context.drawImage(img, 0, 0);
+            qr.decode(context.getImageData(0, 0, this.naturalWidth, this.naturalWidth));
+          };
+          img.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        reader.onload = function(){
+          textarea.value = reader.result;
+          qrcode.clear();
+          qrcode.makeCode(reader.result);
+        };
+        reader.readAsText(file);
+      }
+    }, false);
+    document.addEventListener('paste', function(e){
+      e.preventDefault();
+      var text = e.clipboardData.getData('Text');
+      if (text) {
+        textarea.value = text;
+        qrcode.clear();
+        qrcode.makeCode(text);
+      }
+    }, false);
   </script>
 </body>
 </html>
