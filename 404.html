@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>404 Router</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/5.0.0/sanitize.min.css">
+  <link rel="shortcut icon" href="favicon.ico">
+</head>
+<body>
+  <article style="margin:2em">
+    <h1 style="font-weight:normal">404 Router</h1>
+    <p id="loading">loading...</p>
+  </article>
+  <script src="did-you-mean.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
+  <script>
+    window.onload = function(){
+      var g = document.getElementById.bind(document);
+      var hint = window.location.pathname
+                 .split(/\s+|[_\-\+\/\.\:]/)
+                 .filter(function(x){return x.length})[0];
+      axios.get('404.json').then(function(r){
+        var t = r.data;
+        for (var i in t) {
+          if (i !== '404.html' && new dym(t[i].join(' ')).get(hint)) {
+            g('loading').innerText = 'Goto ' + i + ' ...';
+            window.location.pathname = i;
+            break;
+          }
+        }
+      });
+      g('loading').innerHTML = 'Not found, goto <a href="index.html">index.html</a> ?';
+    };
+  </script>
+</body>
+</html>
