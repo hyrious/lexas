@@ -20,13 +20,14 @@
       var g = document.getElementById.bind(document);
       var hint = window.location.pathname
                  .split(/\s+|[_\-\+\/\.\:]/)
-                 .filter(function(x){return x.length})[0];
+                 .filter(function(x){return x.length && x !== 'html'});
+      hint = hint[hint.length - 1];
       axios.get('404.json').then(function(r){
         var t = r.data;
         for (var i in t) {
           if (i !== '404.html' && new dym(t[i].join(' ')).get(hint)) {
             g('loading').innerText = 'Goto ' + i + ' ...';
-            window.location.pathname = i;
+            window.location.pathname = '/lexas/' + i;
             break;
           }
         }
