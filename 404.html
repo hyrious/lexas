@@ -23,16 +23,20 @@
                  .filter(function(x){return x.length && x !== 'html'});
       hint = hint[hint.length - 1];
       axios.get('404.json').then(function(r){
+        var flag = true;
         var t = r.data;
         for (var i in t) {
           if (i !== '404.html' && new dym(t[i].join(' ')).get(hint)) {
             g('loading').innerText = 'Goto ' + i + ' ...';
             window.location.pathname = '/lexas/' + i;
+            flag = false;
             break;
           }
         }
+        if (flag) {
+          g('loading').innerHTML = 'Not found, goto <a href="index.html">index.html</a> ?';
+        }
       });
-      g('loading').innerHTML = 'Not found, goto <a href="index.html">index.html</a> ?';
     };
   </script>
 </body>
