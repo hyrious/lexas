@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Marked</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width initial-scale=1">
+  <link rel="shortcut icon" href="favicon.ico">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/5.0.0/sanitize.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.css" />
+  <style>
+    html,body{min-height:100%}body{padding:20px}main{min-height:100%}
+    body{background-color:snow;color:maroon}
+    .help {
+      padding: 200px 50px;
+      border: 2px dashed maroon;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .help>.text { font-size: inherit }
+    .help>.text>button { border: none }
+    .help>.text>button:hover { color: peru }
+    .help>.text>button:active { color: firebrick }
+    .marked {
+      max-width: 732px;
+      margin: 0 auto;
+      padding: 20px 0;
+      background-color: white;
+      color: rgba(0,0,0,.78); 
+      text-shadow: 0 0 1px rgba(0,0,0,.12);
+      box-shadow: 0 2px 6px 0px rgba(0,0,0,.12);
+      font-size: 18px;
+      line-height: 1.58;
+      font-family: 'Droid Serif', Georgia, Cambria, 'Times New Roman', 'Noto Serif CJK SC', 'Source Han Serif SC', 'Source Han Serif CN', 'Inziu Iosevka Slab SC', 'Microsoft YaHei', serif;
+    }
+    .marked p {
+      margin: 0 21px 12px;
+      word-wrap: break-word;
+    }
+    .marked table {
+      margin: 0 21px 12px;
+      font-family: mononoki, 'Ubuntu Mono', Consolas, 'Inziu Iosevka SC', 'Microsoft YaHei', monospace;
+    }
+    .marked div {
+      margin: 0 21px 12px;
+    }
+    .marked pre {
+      margin: 14px 0;
+      padding: 7px 21px;
+      background-color: #f6f8fa;
+      line-height: 1.33;
+      overflow-x: auto;
+    }
+    .marked pre code {
+      padding: 0;
+      background-color: unset;
+      font-size: 14px;
+    }
+    .marked code {
+      padding: .2em 8px;
+      border-radius: 3px;
+      background-color: rgba(27,31,35,0.05);
+      font-size: 16px;
+    }
+    .marked ul, .marked ol {
+      margin: 0 21px 12px 61px;
+      padding: 0;
+    }
+    .marked blockquote {
+      margin: 18px 21px 16px 0;
+      border-left: 3px solid #000;
+      padding-left: 15px;
+      position: relative;
+      font-style: italic;
+    }
+    .marked hr {
+      width: 50%;
+      margin: 30px auto;
+      border: none; }
+      .marked hr:after {
+        content: '';
+        display: block;
+        border-top: 1px solid #c9cdd1;
+        margin: 0 3px;
+        position: relative;
+        top: 1px; }
+    .marked a[href] {
+      word-break: keep-all;
+      color: inherit;
+      text-decoration: none;
+      border-bottom: .1em solid rgba(0,0,0,.12); }
+      .marked a[href]:hover {
+        color: rgba(0,0,0,.56);
+        border-bottom-color: rgba(0,0,0,.5); }
+      .marked a[href]:active {
+        color: #000;
+        border-bottom-color: #000; }
+    .marked h1,.marked h2,.marked h3,.marked h4,.marked h5,.marked h6 {
+      font-family: 'Open Sans', Arial, 'Noto Sans CJK SC', 'Source Han Sans SC', 'Source Han Sans CN', 'Inziu Iosevka SC', 'Microsoft YaHei', sans-serif;
+      font-weight: 700;
+    }
+    .marked h1,h2,h3 {
+      margin: 18px 21px 9px;
+      font-size: 28px;
+    }
+    .marked h4,h5,h6 {
+      margin: 18px 21px 7px;
+      font-size: 24px;
+    }
+    @media print {
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main id="app">
+    <div class="help">
+      <div class="text">
+        drop / <button id="upload">upload</button>
+      </div>
+    </div>
+    <input type="file" id="the_file" style="display:none">
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Flowtype.js/1.1.0/flowtype.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.9/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/addon/runmode/runmode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/addon/runmode/colorize.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/mode/meta.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/addon/mode/loadmode.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/katex.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.8.3/contrib/auto-render.min.js"></script>
+  <script>
+    var app = document.getElementById('app');
+    CodeMirror.modeURL = 'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.33.0/mode/%N/%N.min.js';
+    var renderer = new marked.Renderer();
+    renderer.code = function(code, lang){
+      code = code.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+      if (!lang) return '<pre><code>'+code+'</code></pre>';
+      var mode = CodeMirror.findModeByName(lang || '');
+      if (!mode) return '<pre><code>'+code+'</code></pre>';
+      mode = mode.mode;
+      if (!(mode in CodeMirror.modes)) {
+        CodeMirror.requireMode(mode, function(){CodeMirror.colorize()});
+      }
+      return '<pre data-lang="' + lang + '">' + code + '</pre>';
+    };
+    function onloadText(text){
+      $('#app').html(marked(text, { renderer: renderer }));
+      $('#app').addClass('marked');
+      renderMathInElement(app, {
+        delimiters: [
+          {left: "$$", right: "$$", display: true},
+          {left: "$", right: "$", display: false},
+          {left: "\\[", right: "\\]", display: true},
+          {left: "\\(", right: "\\)", display: false}
+        ]
+      });
+    }
+    function handle(file){
+      $('.help').hide();
+      var fr = new FileReader();
+      fr.onload = function(){ onloadText(fr.result) };
+      fr.readAsText(file);
+    }
+    app.addEventListener('drop', function(ev){
+      ev.preventDefault();
+      app.style.opacity = 1;
+      handle(ev.dataTransfer.files[0]);
+    }, false);
+    app.addEventListener('dragover', function(ev){
+      ev.preventDefault();
+      ev.dataTransfer.dropEffect = 'copy';
+      app.style.opacity = .4;
+    }, false);
+    app.addEventListener('dragend', function(ev){
+      ev.preventDefault();
+      ev.dataTransfer.clearData();
+    }, false);
+    $('.help').flowtype({
+      minimum   : 320,
+      maximum   : 1200,
+      minFont   : 22,
+      maxFont   : 72,
+      fontRatio : 18
+    });
+    $('#the_file').on('change', function(ev){
+      handle(ev.target.files[0]);
+    });
+    $('#upload').on('click', function(ev){
+      $('#the_file').click();
+    });
+  </script>
+</body>
+</html>

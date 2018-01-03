@@ -2,6 +2,19 @@
 
 A SPA playground.
 
+*Notice*: pages below are using *inline-script*, which may be blocked
+by uMatrix or other content-block plugins.
+
+## Pages
+
+- [OPG parser](opg.html)
+- [Markdown to Discuz!bbcode](marked-discuz.html)
+- [Pixiv profile banner generator](pixiv-profile-banner.html?id=23333)
+- [QRCode Helper](qrcode.html)
+- [MDP Robot](mdp.html)
+- [Marked](marked.html)
+- [404 Router](404.html)
+
 ## How it works
 
 An HTML is enough for containing related resources, for example,

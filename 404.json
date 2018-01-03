@@ -1,5 +1,6 @@
 {
-  "marked-discuz.html": ["marked", "markdown", "md", "discuz", "bbcode"],
+  "marked.html": ["marked", "markdown", "md"],
+  "marked-discuz.html": ["discuz", "bbcode"],
   "mdp.html": ["robot", "dp", "python"],
   "opg.html": ["operator", "grammar", "parser", "lexer", "lexas"],
   "pixiv-profile-banner.html": ["pixiv", "profile", "banner", "canvas"],
