@@ -1,5 +1,3 @@
-# LeXaS
-
 A SPA playground.
 
 *Notice*: pages below are using *inline-script*, which may be blocked
@@ -13,6 +11,7 @@ by uMatrix or other content-block plugins.
 - [QRCode Helper](qrcode.html)
 - [MDP Robot](mdp.html)
 - [Marked](marked.html)
+- [Secret](secret.html)
 - [404 Router](404.html)
 
 ## How it works
@@ -21,7 +20,7 @@ An HTML is enough for containing related resources, for example,
 the [qrcode](qrcode.html).
 
 Front-end is easy enough with huge amount of packages/libraries.
-Thanks for CDN, we could build things by standing on the shoulders
+Thanks CDN, we could build things by standing on the shoulders
 of giants.
 
 ### [404 Router](https://hyrious.github.io/lexas/4040404)

@@ -6,5 +6,6 @@
   "pixiv-profile-banner.html": ["pixiv", "profile", "banner", "canvas"],
   "qrcode.html": ["qrcode"],
   "404.html": ["404"],
+  "secret.html": ["secret", "encrypt", "decrypt"],
   "index.html": ["index"]
 }
