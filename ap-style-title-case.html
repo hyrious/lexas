@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ap-Style-Title-Case</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/0.5.0/modern-normalize.min.css">
+  <style>
+    body { max-width: 768px; margin: 0 auto; padding: 12px 21px; line-height: 1.5 }
+    a { color: inherit }
+    span[contenteditable] { display: inline-block }
+  </style>
+</head>
+<body>
+  <div style="padding-top: 22vh">&nbsp;</div>
+  <h1><span contenteditable style="padding: 8px; outline: 1px solid"></span></h1>
+  <h1><a data-ap href="https://github.com/words/ap-style-title-case">ap-style-title-case</a></h1>
+  <h2>The Rules</h2>
+  <ul>
+    <li>Always capitalize the first word, even if it's a stopword</li>
+    <li>Always capitalize the last word, even if it's a stopword</li>
+    <li>Lowercase these words: a an and at but by for in nor of on or so the to up yet</li>
+  </ul>
+  <p>Refer to <a href="https://github.com/words/ap-style-title-case">this repo</a>.</p>
+  <script>
+    /* https://github.com/words/ap-style-title-case */
+    const stopwords = 'a an and at but by for in nor of on or so the to up yet'.split(' ')
+
+    function titleCase (str, options) {
+      if (!str) return ''
+      if (!options) options = {}
+
+      const stop_words = options.stopwords || stopwords
+
+      const splitter = /(\s+|[-‑–—])/
+      var words = str.split(splitter)
+
+      return words
+        .map((word, index) => {
+          if (word.match(/\s+/)) return options.keepSpaces ? word : ' '
+          if (word.match(splitter)) return word
+
+          if (index === 0) return capitalize(word)
+
+          if (index === words.length - 1) return capitalize(word)
+          if (stop_words.includes(word.toLowerCase())) return word.toLowerCase()
+          return capitalize(word)
+        })
+        .join('')
+    }
+
+    function capitalize (str) {
+      return str.charAt(0).toUpperCase() + str.slice(1)
+    }
+    
+    var span = document.querySelector('[contenteditable]');
+    span.focus();
+    span.addEventListener('blur', function(e){
+      this.textContent = titleCase(this.textContent);
+    });
+
+    [].forEach.call(document.querySelectorAll('[data-ap]'), function(e){
+      e.textContent = titleCase(e.textContent);
+    });
+  </script>
+</body>
+</html>

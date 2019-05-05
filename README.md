@@ -17,6 +17,7 @@ by uMatrix or other content-block plugins.
 ### Misc
 
 - [LanguageTool](languagetool.html)
+- [ap-style-title-case](ap-style-title-case.html)
 
 ## How it works
 
