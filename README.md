@@ -1,4 +1,4 @@
-A SPA playground.
+An SPA playground.
 
 *Notice*: pages below are using *inline-script*, which may be blocked
 by uMatrix or other content-block plugins.
@@ -13,6 +13,10 @@ by uMatrix or other content-block plugins.
 - [Marked](marked.html)
 - [Secret](secret.html)
 - [404 Router](404.html)
+
+### Misc
+
+- [LanguageTool](languagetool.html)
 
 ## How it works
 

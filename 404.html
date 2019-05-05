@@ -7,36 +7,32 @@
   <meta name="viewport" content="width=device-width initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/5.0.0/sanitize.min.css">
   <link rel="shortcut icon" href="favicon.ico">
+  <script>
+    var did_you_mean = {
+      
+    };
+  </script>
 </head>
 <body>
   <article style="margin:2em">
     <h1 style="font-weight:normal">404 Router</h1>
     <p id="loading">loading...</p>
   </article>
-  <script src="did-you-mean.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.1/axios.min.js"></script>
   <script>
     window.onload = function(){
       var g = document.getElementById.bind(document);
-      var hint = window.location.pathname
+      function go(path) {
+        g('loading').innerText = 'Goto ' + i + ' ...';
+        window.location.pathname = '/lexas/' + i;
+      }
+      function no(html) {
+        g('loading').innerHTML = html;
+      }
+      var hints = window.location.pathname
                  .split(/\s+|[_\-\+\/\.\:]/)
                  .filter(function(x){return x.length && x !== 'html'});
-      hint = hint[hint.length - 1];
-      axios.get('404.json').then(function(r){
-        var flag = true;
-        var t = r.data;
-        for (var i in t) {
-          if (i !== '404.html' && new dym(t[i].join(' ')).get(hint)) {
-            g('loading').innerText = 'Goto ' + i + ' ...';
-            window.location.pathname = '/lexas/' + i;
-            flag = false;
-            break;
-          }
-        }
-        if (flag) {
-          g('loading').innerHTML = 'Not found, goto <a href="index.html">index.html</a> ?';
-        }
-      });
+      no('Not found, goto <a href="index.html">index.html</a> ?');
+      console.log(hints);
     };
   </script>
 </body>
